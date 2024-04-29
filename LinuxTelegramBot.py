@@ -88,7 +88,7 @@ def main():
     # Valid user to run commands.
     validuser = 'iamsamir090'
     # Bot token
-    updater = Updater('6572573718:AAHRAkfghAKDhR0nWxNR9uQxQrds680JLMc', use_context=True)
+    updater = Updater('6572573718:AAHRAkfghAKDhR0nWxNR9uQxQrds680JLMc')
     dp = updater.dispatcher
     # Command Handlers
     dp.add_handler(CommandHandler('dog', dog))
