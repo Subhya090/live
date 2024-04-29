@@ -86,9 +86,9 @@ def helpme(bot, update):
 def main():
     global validuser 
     # Valid user to run commands.
-    validuser = '<USER>'
+    validuser = 'iamsamir090'
     # Bot token
-    updater = Updater('<BotToken>')
+    updater = Updater('6572573718:AAHRAkfghAKDhR0nWxNR9uQxQrds680JLMc')
     dp = updater.dispatcher
     # Command Handler
     dp.add_handler(CommandHandler('dog', dog))
