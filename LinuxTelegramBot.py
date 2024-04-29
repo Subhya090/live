@@ -5,7 +5,7 @@
 # Version: 1.0
 # All rights reserved
 
-# Import necessary modules
+#Import necessary modules
 from telegram.ext import Updater, CommandHandler, MessageHandler
 import telegram.ext.filters as filters
 import requests
@@ -13,10 +13,10 @@ import re
 import subprocess
 
 # Get your UserName 
-def whoami(update, context): 
+def whoami(bot, update): 
     nome = update.message.chat.username
     chat_id = update.message.chat_id
-    context.bot.send_message(chat_id=chat_id, text=nome)
+    bot.send_message(chat_id=chat_id, text=nome)
 
 def get_url():
     contents = requests.get('https://random.dog/woof.json').json()
@@ -32,55 +32,55 @@ def get_image_url():
     return url
 
 # Just an example to parse another URL and send the content.
-def dog(update, context):
+def dog(bot, update):
     chat_id = update.message.chat_id
     if update.message.chat.username == validuser:    
         url = get_image_url()
-        context.bot.send_message(chat_id=chat_id, text="Segue a foto do catioro!")
-        context.bot.send_photo(chat_id=chat_id, photo=url)
+        bot.send_message(chat_id=chat_id, text="Segue a foto do catioro!")
+        bot.send_photo(chat_id=chat_id, photo=url)
     else:
-        context.bot.send_message(chat_id=chat_id, text="Usuário não permitido!")
+        bot.send_message(chat_id=chat_id, text="Usuário não permitido!")
 
 # Runs any command on linux, Be careful
-def opencmd(update, context):
+def opencmd(bot, update):
     if update.message.chat.username == validuser:
         saida = subprocess.getoutput(update.message.text.lower())
-        context.bot.send_message(chat_id=update.message.chat_id, text=saida)
+        bot.send_message(chat_id=update.message.chat_id, text=saida)
 
 # Runs any command on linux. Be careful
-def cmd(update, context):
+def cmd(bot, update, args):
     chat_id = update.message.chat_id
     if update.message.chat.username == validuser:
-       cmd_exec = ' '.join(context.args).lower()
+       cmd_exec = ' '.join(args).lower()
        saida = subprocess.getoutput(cmd_exec)
-       context.bot.send_message(chat_id=update.message.chat_id, text=saida)
+       bot.send_message(chat_id=update.message.chat_id, text=saida)
 
 # Check Disk, Memory and CPU Load
-def check(update, context):
+def check(bot, update, args):
     chat_id = update.message.chat_id
     if update.message.chat.username == validuser:
-        cmd_exec = ' '.join(context.args).lower()
+        cmd_exec = ' '.join(args).lower()
         if cmd_exec == 'disk':
             saida = subprocess.getoutput('df -h')
-            context.bot.send_message(chat_id=update.message.chat_id, text=saida)
+            bot.send_message(chat_id=update.message.chat_id, text=saida)
         elif cmd_exec == 'memory':
             saida = subprocess.getoutput('free -m')
-            context.bot.send_message(chat_id=update.message.chat_id, text=saida)
+            bot.send_message(chat_id=update.message.chat_id, text=saida)
         elif cmd_exec == 'cpu':
             saida = subprocess.getoutput('uptime')
-            context.bot.send_message(chat_id=update.message.chat_id, text=saida)
+            bot.send_message(chat_id=update.message.chat_id, text=saida)
 
 # Send the available commands.
-def helpme(update, context):
+def helpme(bot, update):
     chat_id = update.message.chat_id
     if update.message.chat.username == validuser:
-        context.bot.send_message(chat_id=update.message.chat_id, text="Comandos Configuados: \
-                                        \n/help \
-                                        \n/dog \
-                                        \n/cmd <comando> Só use se souber o que está fazendo! \
-                                        \n/check (disk, memory, cpu)")
+        bot.send_message(chat_id=update.message.chat_id, text="Comandos Configuados: \
+										\n/help \
+										\n/dog \
+										\n/cmd <comando> Só use se souber o que está fazendo! \
+										\n/check (disk, memory, cpu)")
     else:
-        context.bot.send_message(chat_id=update.message.chat_id, text="Comandos Configuados: \n/help\n/dog")
+        bot.send_message(chat_id=update.message.chat_id, text="Comandos Configuados: \n/help\n/dog")
 
 # Main - Define the Handler.
 def main():
@@ -90,15 +90,15 @@ def main():
     # Bot token
     updater = Updater('6572573718:AAHRAkfghAKDhR0nWxNR9uQxQrds680JLMc')
     dp = updater.dispatcher
-    # Command Handlers
+    # Command Handler
     dp.add_handler(CommandHandler('dog', dog))
     dp.add_handler(CommandHandler('whoami', whoami))
     dp.add_handler(CommandHandler('help', helpme))
     dp.add_handler(CommandHandler('start', helpme))
     dp.add_handler(CommandHandler('cmd', cmd, pass_args=True))
     dp.add_handler(CommandHandler('check', check, pass_args=True))
-    # Message Handler, you can run any commands on a Linux machine. Be careful
-    dp.add_handler(MessageHandler(filters.Filters.text & ~filters.Filters.command, opencmd))
+    # Message Handle, you can run any commands on linux machine. Be careful
+    dp.add_handler(MessageHandler(Filters.text, opencmd))
     updater.start_polling()
     updater.idle()
 
